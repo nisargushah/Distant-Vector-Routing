@@ -1,7 +1,0 @@
-1) Select input file
-2) Initial link state tables set up in GUI
-3) System detects a stable state
-4) Runs algorithm correctly in single step mode
-5) Runs the algorithm without stopping - displays time
-6) Change a link cost and run the previous state
-
