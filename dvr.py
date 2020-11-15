@@ -1,4 +1,10 @@
-#This is a placeholder
+"""
+Nisarg Shah
+
+10015513132
+
+"""
+
 from tkinter import Tk
 import tkinter as tk     # from tkinter import Tk for Python 3.x
 from tkinter.filedialog import askopenfilename
@@ -7,7 +13,10 @@ import tkinter.messagebox as tkmb
 
 FONT = ("Times New Roman", 12)
 
+"""
+This fucntion provides an intial frame for our GUI
 
+"""
 class window(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -33,7 +42,10 @@ class window(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
+"""
+This class has our button windows
 
+"""
 class HomePage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -51,7 +63,11 @@ class HomePage(tk.Frame):
         button2.pack(pady=10,padx=10)
 
 
+"""
+This is where we read in the file and
+pass the coreect arguments for bellman-ford
 
+"""
 def file_content(filename, choice):
 
     start = time.time()
@@ -61,7 +77,7 @@ def file_content(filename, choice):
 
     data = [lines.split() for lines in Lines]
     #print(data)
-    g = Graph(len(data))
+    g = Graph(6)
     for d in data:
         g.addEdge(int(d[0]),int(d[1]),int(d[2]))
     for i in range(len(data)-1):
@@ -71,6 +87,12 @@ def file_content(filename, choice):
     info_message = "The total run time for algorithm is "+str(end-start)+" seconds"
     tkmb.showinfo("Output", info_message)
 
+
+"""
+
+Class for our graph and all the edges.
+
+"""
 class Graph:
 
     def __init__(self, vertices):
@@ -98,8 +120,8 @@ class Graph:
             for u, v, w in self.graph:
                 if dist[u] != 16 and dist[u] + w < dist[v]:
                     dist[v] = dist[u] + w
-                    print("{0}\t\t{1}".format(src,dist[1:]))
                     if choice == 1:
+                        print("{0}\t\t{1}".format(src,dist[1:]))
                         time.sleep(2)
 
             if dist == dist_copy:
@@ -127,5 +149,9 @@ https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/
 https://stackoverflow.com/questions/3352918/how-to-center-a-window-on-the-screen-in-tkinter
 
 https://stackoverflow.com/questions/3579568/choosing-a-file-in-python-with-simple-dialog
+
+https://www.programiz.com/dsa/bellman-ford-algorithm
+
+https://algotree.org/algorithms/single_source_shortest_path/bellman_ford_shortest_path/
 
 """
