@@ -41,13 +41,18 @@ class HomePage(tk.Frame):
 
         label = tk.Label(self, text="Welcome", font=FONT)
 
-        label.pack(pady=10,padx=10)
+        label.pack(pady=10,padx=50)
+
+        button = tk.Button(self, text="Step-by-step output",
+                            command=lambda: file_content("input.txt", 1))
+        button.pack(pady=10,padx=10)
+        button2 = tk.Button(self, text="Without intervention",
+                            command=lambda: file_content("input.txt", 0))
+        button2.pack(pady=10,padx=10)
 
 
 
-
-
-def file_content(filename):
+def file_content(filename, choice):
 
     start = time.time()
 
@@ -55,14 +60,12 @@ def file_content(filename):
     Lines = f.readlines()
 
     data = [lines.split() for lines in Lines]
-    print(data)
-    g = Graph(len(data))
-
+    #print(data)
     g = Graph(len(data))
     for d in data:
         g.addEdge(int(d[0]),int(d[1]),int(d[2]))
     for i in range(len(data)-1):
-        g.BellmanFord(i+1)
+        g.BellmanFord(i+1, choice)
     end = time.time()
     # print all distance
     info_message = "The total run time for algorithm is "+str(end-start)+" seconds"
@@ -80,13 +83,14 @@ class Graph:
         self.graph.append([v, u, w])
 
     # utility function used to print the solution
-    def printArr(self, dist):
-        print("Vertex Distance from Source")
+    def printArr(self, dist,src):
+        print("Vertex Distance from node (Final result) "+str(src))
         for i in range(1,self.V):
             print("{0}\t\t{1}".format(i, dist[i]))
 
-    def BellmanFord(self, src):
-
+    def BellmanFord(self, src, choice):
+        if choice == 1:
+            print("Step-by-Step values till it reaches stable state are :")
         dist = [16] * self.V
         dist[src] = 0
         for _ in range(1,self.V):
@@ -94,19 +98,22 @@ class Graph:
             for u, v, w in self.graph:
                 if dist[u] != 16 and dist[u] + w < dist[v]:
                     dist[v] = dist[u] + w
-                    print(dist[1:], src)
+                    print("{0}\t\t{1}".format(src,dist[1:]))
+                    if choice == 1:
+                        time.sleep(2)
+
             if dist == dist_copy:
                 break
 
-        self.printArr(dist)
+        self.printArr(dist,src)
 
-# we don't want a full GUI, so keep the root window from appearing
-filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-
-file_content(filename)
-
+#Tk.draw()
 app = window()
+app.eval('tk::PlaceWindow %s center' % app.winfo_pathname(app.winfo_id()))
 app.mainloop()
+
+
+
 
 
 
@@ -116,4 +123,9 @@ References :
 https://stackoverflow.com/questions/3579568/choosing-a-file-in-python-with-simple-dialog
 
 https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/
+
+https://stackoverflow.com/questions/3352918/how-to-center-a-window-on-the-screen-in-tkinter
+
+https://stackoverflow.com/questions/3579568/choosing-a-file-in-python-with-simple-dialog
+
 """
