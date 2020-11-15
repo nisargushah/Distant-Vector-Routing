@@ -1,7 +1,77 @@
 #This is a placeholder
-from tkinter import Tk     # from tkinter import Tk for Python 3.x
+from tkinter import Tk
+import tkinter as tk     # from tkinter import Tk for Python 3.x
 from tkinter.filedialog import askopenfilename
 
+FONT = ("Times New Roman", 12)
+
+
+class window(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+
+        tk.Tk.__init__(self,*args,**kwargs)
+        container = tk.Frame(self)
+
+        container.pack(side="top", fill="both", expand=True)
+
+        container.grid_rowconfigure(0,weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+
+        frame2 = FileSelect(container, self)
+        self.frames [FileSelect] = frame2
+        frame2.grid(row=0,column=0,sticky="nsew")
+
+        frame = HomePage(container,self)
+        self.frames[HomePage] = frame
+        frame.grid(row=0,column=0,sticky="nsew")
+
+        self.show_frame(HomePage)
+
+    def show_frame(self, cont):
+
+        frame = self.frames[cont]
+        frame.tkraise()
+
+
+class HomePage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        label = tk.Label(self, text="Welcome", font=FONT)
+
+        label.pack(pady=10,padx=10)
+
+        btn = tk.Button(self, text="Open input file here", command = lambda:controller.show_frame(FileSelect))
+
+        btn.pack()
+
+
+class FileSelect(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self,parent)
+        label = tk.Label(self, text="Please Select an input file", font=FONT)
+        label.pack(pady=10,padx=10)
+        filename = askopenfilename()
+        file_content(filename)
+
+def file_content(filename):
+    f = open(filename, 'r')
+    Lines = f.readlines()
+
+    data = [lines.split() for lines in Lines]
+    print(data)
+    g = Graph(len(data))
+
+    g = Graph(len(data))
+    for d in data:
+        g.addEdge(int(d[0]),int(d[1]),int(d[2]))
+    for i in range(len(data)-1):
+        g.BellmanFord(i+1)
 
 class Graph:
 
@@ -12,6 +82,7 @@ class Graph:
     # function to add an edge to graph
     def addEdge(self, u, v, w):
         self.graph.append([u, v, w])
+        self.graph.append([v, u, w])
 
     # utility function used to print the solution
     def printArr(self, dist):
@@ -19,62 +90,24 @@ class Graph:
         for i in range(1,self.V):
             print("{0}\t\t{1}".format(i, dist[i]))
 
-    # The main function that finds shortest distances from src to
-    # all other vertices using Bellman-Ford algorithm. The function
-    # also detects negative weight cycle
     def BellmanFord(self, src):
-
-        # Step 1: Initialize distances from src to all other vertices
-        # as INFINITE
-        dist = [float("Inf")] * self.V
+        dist = [16] * self.V
         dist[src] = 0
-
-
-        # Step 2: Relax all edges |V| - 1 times. A simple shortest
-        # path from src to any other vertex can have at-most |V| - 1
-        # edges
-        for _ in range(self.V -1):
-            # Update dist value and parent index of the adjacent vertices of
-            # the picked vertex. Consider only those vertices which are still in
-            # queue
+        for _ in range(1,self.V):
+            dist_copy = dist[:]
             for u, v, w in self.graph:
-                if dist[u] != float("Inf") and dist[u] + w < dist[v]:
-                        dist[v] = dist[u] + w
-
-        # Step 3: check for negative-weight cycles. The above step
-        # guarantees shortest distances if graph doesn't contain
-        # negative weight cycle. If we get a shorter path, then there
-        # is a cycle.
-
-        for u, v, w in self.graph:
-                if dist[u] != float("Inf") and dist[u] + w < dist[v]:
-                        print("Graph contains negative weight cycle")
-                        return
+                if dist[u] != 16 and dist[u] + w < dist[v]:
+                    dist[v] = dist[u] + w
+                    print(dist[1:], src)
+            if dist == dist_copy:
+                break
 
         # print all distance
         self.printArr(dist)
 
 
-Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
-filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
-f = open(filename, 'r')
-Lines = f.readlines()
-
-data = [lines.split() for lines in Lines]
-
-g = Graph(len(data))
-
-
-
-g = Graph(len(data))
-for d in data:
-    g.addEdge(int(d[0]),int(d[1]),int(d[2]))
-    g.addEdge(int(d[1]),int(d[0]),int(d[2]))
-
-
-g.BellmanFord(1)
-
-
+app = window()
+app.mainloop()
 
 
 
