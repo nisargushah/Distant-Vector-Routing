@@ -2,6 +2,8 @@
 from tkinter import Tk
 import tkinter as tk     # from tkinter import Tk for Python 3.x
 from tkinter.filedialog import askopenfilename
+import time
+import tkinter.messagebox as tkmb
 
 FONT = ("Times New Roman", 12)
 
@@ -19,10 +21,6 @@ class window(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-
-        frame2 = FileSelect(container, self)
-        self.frames [FileSelect] = frame2
-        frame2.grid(row=0,column=0,sticky="nsew")
 
         frame = HomePage(container,self)
         self.frames[HomePage] = frame
@@ -45,21 +43,14 @@ class HomePage(tk.Frame):
 
         label.pack(pady=10,padx=10)
 
-        btn = tk.Button(self, text="Open input file here", command = lambda:controller.show_frame(FileSelect))
-
-        btn.pack()
 
 
-class FileSelect(tk.Frame):
 
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self,parent)
-        label = tk.Label(self, text="Please Select an input file", font=FONT)
-        label.pack(pady=10,padx=10)
-        filename = askopenfilename()
-        file_content(filename)
 
 def file_content(filename):
+
+    start = time.time()
+
     f = open(filename, 'r')
     Lines = f.readlines()
 
@@ -72,6 +63,10 @@ def file_content(filename):
         g.addEdge(int(d[0]),int(d[1]),int(d[2]))
     for i in range(len(data)-1):
         g.BellmanFord(i+1)
+    end = time.time()
+    # print all distance
+    info_message = "The total run time for algorithm is "+str(end-start)+" seconds"
+    tkmb.showinfo("Output", info_message)
 
 class Graph:
 
@@ -91,6 +86,7 @@ class Graph:
             print("{0}\t\t{1}".format(i, dist[i]))
 
     def BellmanFord(self, src):
+
         dist = [16] * self.V
         dist[src] = 0
         for _ in range(1,self.V):
@@ -102,9 +98,12 @@ class Graph:
             if dist == dist_copy:
                 break
 
-        # print all distance
         self.printArr(dist)
 
+# we don't want a full GUI, so keep the root window from appearing
+filename = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+
+file_content(filename)
 
 app = window()
 app.mainloop()
